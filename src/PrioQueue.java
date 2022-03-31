@@ -36,11 +36,27 @@ public class PrioQueue {
     // Push elements to the priority queue based on its cost
     // The lower the cost, the earlier its placement
     public void push(Node elmt) {
-        // Add the element to the back of the array
-        this.prioQueue.add(elmt);
-
-        // Sort the priority queue
-        Collections.sort(this.prioQueue, Comparator.comparingInt(Node::getCost));
+        // If priority queue is still empty, just add the element
+        if (this.prioQueue.isEmpty()) {
+            this.prioQueue.add(elmt);
+        } else {
+            int index = -999;
+            boolean foundIndex = false;
+            // If priority queue has an element, find the correct position for it
+            for (int i = 0; i < this.prioQueue.size() && !foundIndex; i++) {
+                // If found an item with higher cost than element cost,
+                // move the element in front of the item
+                if (elmt.getCost() < this.prioQueue.get(i).getCost()) {
+                    index = i;
+                    foundIndex = true;
+                }
+            }
+            if (index != -999) {
+                this.prioQueue.add(index, elmt);
+            } else {
+                this.prioQueue.add(elmt);
+            }
+        }
     }
 
     // Pop the front element of the queue
@@ -56,13 +72,17 @@ public class PrioQueue {
         return this.prioQueue.size();
     }
 
-    public void displayQueue() {
-        System.out.print("[");
-        for (int i = 0; i < this.prioQueue.size(); i++) {
-            System.out.print("(");
-            System.out.print(this.prioQueue.get(i).getId() + "," + this.prioQueue.get(i).getCost());
-            System.out.print(")");
+    public void removeLowerPriority(Node e_node) {
+        for (int i = this.length() - 1; i >= 0; i--) {
+            if (this.prioQueue.get(i).getCost() > e_node.getCost()) {
+                this.pop();
+            }
         }
-        System.out.println("]");
+    }
+
+    public void displayQueue() {
+        for (int i = 0; i < this.prioQueue.size(); i++) {
+            this.prioQueue.get(i).displayIndividualNodes();
+        }
     }
 }
