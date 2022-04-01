@@ -50,4 +50,43 @@ public class Utilities {
         }
         return resultList;
     }
+
+    public static ArrayList<ArrayList<Integer>> convertListToMatrix(ArrayList<Integer> list) {
+        int counter = 0;
+        ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < 4; i++) {
+            ArrayList<Integer> matrixRow = new ArrayList<Integer>();
+            for (int j = 0; j < 4; j++) {
+                matrixRow.add(list.get(counter));
+                counter++;
+            }
+            matrix.add(matrixRow);
+        }
+
+        return matrix;
+    }
+
+    public static boolean checkRepeatance(ArrayList<Node> nodeList, Node elmt) {
+        for (int i = 0; i < nodeList.size(); i++) {
+            if (nodeList.get(i).getMatrix().equals(elmt.getMatrix())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String displayGoalStates(ArrayList<Node> goalState) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < goalState.size() - 1; i++) {
+            if (i == goalState.size() - 2) {
+                output.append("Final State: \n");
+                output.append(goalState.get(i).displayNodesMatrixInString());
+            } else {
+                output.append("Matrix: \n");
+                output.append(goalState.get(i).displayNodesMatrixInString());
+            }
+
+        }
+        return output.toString();
+    }
 }

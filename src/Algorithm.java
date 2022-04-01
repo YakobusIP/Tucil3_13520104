@@ -170,26 +170,30 @@ public class Algorithm {
         boolean goal = (boolean)reachableResult.get(0);
         int result = (int)reachableResult.get(1);
         ArrayList<Node> goalStates = new ArrayList<Node>();
+        ArrayList<Node> allStates = new ArrayList<Node>();
         if (goal) {
             System.out.println("Function KURANG(i) + X result is " + result + " which is even");
             PrioQueue liveNodes = new PrioQueue();
             Node e_node;
-            int level = 1;
             boolean finish = false;
             int counter = 0;
-            while (!finish && counter < 10) {
-                System.out.println("Level: " + level);
-
+            while (!finish) {
                 if (liveNodes.getPrioQueue().isEmpty()) {
                     e_node = root;
+                    goalStates.add(e_node);
+                    if (!Utilities.checkRepeatance(allStates, e_node)) {
+                        allStates.add(e_node);
+                    }
                 } else {
                     e_node = liveNodes.peek();
+                    goalStates.add(e_node);
                     liveNodes.pop();
+                    if (!Utilities.checkRepeatance(allStates, e_node)) {
+                        allStates.add(e_node);
+                    }
                 }
                 System.out.println("Current e-node: ");
                 e_node.displayIndividualNodes();
-
-
 
                 // If the current e_node is the goal state
                 if (getDifference(e_node.getMatrix()) == 0) {
@@ -197,6 +201,8 @@ public class Algorithm {
                     // Add the node to the goal state list
                     goalStates.add(e_node);
                     // Remove nodes with higher cost (lower priority) than the e_node
+                    //liveNodes.removeLowerPriority(e_node);
+
                     liveNodes.removeLowerPriority(e_node);
 
                     // If no more live nodes exists, break the loop
@@ -205,10 +211,8 @@ public class Algorithm {
                     }
                 } else {
                     ArrayList<String> availableDirection = checkDirectionPossibilities(e_node.getMatrix());
-                    boolean loopFinish = false;
                     ArrayList<String> directionList = e_node.getDirections();
                     for (String direction : availableDirection) {
-                        loopFinish = false;
                         // If e_node directionList is empty, add all directions
                         if (directionList.isEmpty()) {
                             // Create new child matrix based on a direction
@@ -219,14 +223,15 @@ public class Algorithm {
 
                             // Calculate differences and cost
                             int difference = getDifference(newChildMatrix);
-                            int cost = difference + level;
+                            int cost = difference + e_node.getDepth() + 1;
 
                             // Add direction to the directionList
                             childDirectionList.add(direction);
                             Node newChild = new Node(newChildMatrix, cost, childDirectionList);
 
                             // Add newChild to liveNodes
-                            liveNodes.push(newChild);
+                            liveNodes.push(allStates, newChild);
+                            allStates.add(newChild);
                         } else {
                             // Skipping the creation of recurring matrices (e.g. after moving "DOWN", skip adding moving "UP")
                             if (!direction.equals(Utilities.getReverseDirection(directionList.get(e_node.getDepth() - 1)))) {
@@ -238,102 +243,20 @@ public class Algorithm {
 
                                 // Calculate differences and cost
                                 int difference = getDifference(newChildMatrix);
-                                int cost = difference + level;
+                                int cost = difference + e_node.getDepth() + 1;
 
                                 // Add direction to the directionList
                                 childDirectionList.add(direction);
                                 Node newChild = new Node(newChildMatrix, cost, childDirectionList);
 
                                 // Add newChild to liveNodes
-                                liveNodes.push(newChild);
+                                liveNodes.push(allStates, newChild);
+                                allStates.add(newChild);
                             }
                         }
-
-                        loopFinish = true;
-                    }
-
-                    if (loopFinish) {
-                        System.out.println("Adding level");
-                        level++;
                     }
                 }
-                counter++;
-                System.out.println("Live Nodes List: ");
-                liveNodes.displayQueue();
             }
-
-            /*
-            // Loop until there's no more live nodes
-            while (liveNodes.length() > 0 && !finish) {
-                // If the matrix is the goal state, add it to the goalStates list
-                if (getDifference(liveNodes.peek().getMatrix()) == 0) {
-                    System.out.println("Found solution!");
-                    // Append the node to goal state
-                    goalStates.add(liveNodes.peek());
-
-                    // Remove elements with the cost larger than the goal state
-                    liveNodes.removeLowerPriority();
-
-                    // Pop the front element of the priority queue
-                    liveNodes.pop();
-                }
-
-                if (liveNodes.getPrioQueue().isEmpty()) {
-                    finish = true;
-                } else {
-
-                    ArrayList<String> availableDirection = checkDirectionPossibilities(liveNodes.peek().getMatrix());
-                    boolean endLoop = false;
-                    for (String direction : availableDirection) {
-                        System.out.println("Assessing " + direction + " direction");
-                        endLoop = false;
-                        ArrayList<String> directionList = liveNodes.peek().getDirections();
-                        // If direction list is still empty, append the new direction
-                        if (directionList.size() == 0) {
-                            //System.out.println("Masuk");
-                            // Create new child based on direction
-                            ArrayList<ArrayList<Integer>> newChild = createNewChild(liveNodes.peek().getMatrix(), direction);
-                            // Append the new direction to the node
-                            directionList.add(direction);
-
-                            int difference = getDifference(newChild);
-                            int cost = level + difference + 1;
-
-                            Node childNode = new Node(newChild, cost, directionList);
-                            liveNodes.push(childNode);
-                        } else {
-                            //System.out.println("Masuk 2");
-                            // If the next direction is opposite of the last direction, skip it, else create a new child
-                            System.out.println("Reverse direction: " + Utilities.getReverseDirection(directionList.get(level)));
-                            if (direction.equals(Utilities.getReverseDirection(directionList.get(level)))) {
-                                continue;
-                            } else {
-                                // Create new child based on direction
-                                //System.out.println("Not here");
-                                ArrayList<ArrayList<Integer>> newChild = createNewChild(liveNodes.peek().getMatrix(), direction);
-                                // Append the new direction to the node
-                                //System.out.println("Not here 2");
-                                directionList.add(direction);
-
-                                int difference = getDifference(newChild);
-                                int cost = level + difference + 1;
-
-                                //System.out.println("Not here 3");
-                                Node childNode = new Node(newChild, cost, directionList);
-                                liveNodes.push(childNode);
-                            }
-                        }
-                        endLoop = true;
-                    }
-
-                    if (endLoop) {
-                        goalStates.add(liveNodes.peek());
-                        level++;
-                    }
-
-                    liveNodes.pop();
-                }
-            } */
         } else {
             System.out.println("Goal is not reachable!");
             System.out.println("Function KURANG(i) + X result is " + result + " which is odd");

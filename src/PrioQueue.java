@@ -33,26 +33,29 @@ public class PrioQueue {
 
     // Push elements to the priority queue based on its cost
     // The lower the cost, the earlier its placement
-    public void push(Node elmt) {
-        // If priority queue is still empty, just add the element
-        if (this.prioQueue.isEmpty()) {
-            this.prioQueue.add(elmt);
-        } else {
-            int index = -999;
-            boolean foundIndex = false;
-            // If priority queue has an element, find the correct position for it
-            for (int i = 0; i < this.prioQueue.size() && !foundIndex; i++) {
-                // If found an item with higher cost than element cost,
-                // move the element in front of the item
-                if (elmt.getCost() < this.prioQueue.get(i).getCost()) {
-                    index = i;
-                    foundIndex = true;
-                }
-            }
-            if (index != -999) {
-                this.prioQueue.add(index, elmt);
-            } else {
+    public void push(ArrayList<Node> nodeList, Node elmt) {
+        // If the element already exists in the node list, don't add it
+        if (!Utilities.checkRepeatance(nodeList, elmt)) {
+            // If priority queue is still empty, just add the element
+            if (this.prioQueue.isEmpty()) {
                 this.prioQueue.add(elmt);
+            } else {
+                int index = -999;
+                boolean foundIndex = false;
+                // If priority queue has an element, find the correct position for it
+                for (int i = 0; i < this.prioQueue.size() && !foundIndex; i++) {
+                    // If found an item with higher cost than element cost,
+                    // move the element in front of the item
+                    if (elmt.getCost() < this.prioQueue.get(i).getCost()) {
+                        index = i;
+                        foundIndex = true;
+                    }
+                }
+                if (index != -999) {
+                    this.prioQueue.add(index, elmt);
+                } else {
+                    this.prioQueue.add(elmt);
+                }
             }
         }
     }
@@ -76,6 +79,10 @@ public class PrioQueue {
                 this.pop();
             }
         }
+    }
+
+    public void clearPrioQueue() {
+        this.prioQueue.clear();
     }
 
     public void displayQueue() {

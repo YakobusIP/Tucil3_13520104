@@ -78,4 +78,20 @@ public class Node {
         System.out.println("Depth: " + this.depth);
         System.out.println();
     }
+
+    public String displayNodesMatrixInString() {
+        StringBuilder output = new StringBuilder();
+        if (this.directions.size() != 0) {
+            output.append("Direction taken: " + this.directions.get(this.directions.size() - 1) + "\n");
+        }
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                output.append(this.matrix.get(i).get(j) + " ");
+            }
+            output.append("\n");
+        }
+        output.append("\n");
+        return output.toString();
+    }
 }
