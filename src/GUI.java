@@ -295,7 +295,7 @@ public class GUI {
                 }
             }
         } else {
-            printErrorMessage("Choose only one method to get the matrix! Click the reset button to use another method");
+            printErrorMessage("Choose only one method to get the matrix!");
         }
     }
 
@@ -305,21 +305,27 @@ public class GUI {
         boolean correct = true;
         // If user didn't use a file or create a random matrix, then read the entry from the text fields
         if (!usingFile && !usingRandom) {
-            correct = false;
-            ArrayList<Integer> listOfNumbers = new ArrayList<Integer>();
-            for (JTextField textFields : listOfTextFields) {
-                textFields.setEditable(false);
-                String strNumber = textFields.getText();
-                Integer number = Integer.valueOf(strNumber);
-                listOfNumbers.add(number);
+            try {
+                correct = false;
+                ArrayList<Integer> listOfNumbers = new ArrayList<Integer>();
+                for (JTextField textFields : listOfTextFields) {
+                    textFields.setEditable(false);
+                    String strNumber = textFields.getText();
+                    Integer number = Integer.valueOf(strNumber);
+                    listOfNumbers.add(number);
+                }
+                System.out.println(listOfNumbers);
+                matrix = Utilities.convertListToMatrix(listOfNumbers);
+                if (Utilities.checkRepeatingElement(matrix)) {
+                    printErrorMessage("Not all matrix elements are distinct!");
+                } else {
+                    correct = true;
+                }
+            } catch (Exception e) {
+                printErrorMessage("Please input the matrix using one method!");
+                listOfTextFields.get(0).setEditable(true);
             }
-            System.out.println(listOfNumbers);
-            matrix = Utilities.convertListToMatrix(listOfNumbers);
-            if (Utilities.checkRepeatingElement(matrix)) {
-                printErrorMessage("Not all matrix elements are distinct!");
-            } else {
-                correct = true;
-            }
+
         }
 
         if (correct) {
