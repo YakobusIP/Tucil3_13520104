@@ -300,6 +300,7 @@ public class GUI {
     }
 
     // Action when start button is pressed
+    @SuppressWarnings("unchecked")
     public void startButtonPressed() {
         boolean correct = true;
         // If user didn't use a file or create a random matrix, then read the entry from the text fields
