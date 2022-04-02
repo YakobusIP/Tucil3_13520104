@@ -8,6 +8,7 @@ public class Node {
     private ArrayList<String> directions;
     private int depth;
 
+    // Default constructor
     public Node() {
         this.setId(++counter);
         this.matrix = new ArrayList<ArrayList<Integer>>();
@@ -16,6 +17,7 @@ public class Node {
         this.depth = 0;
     }
 
+    // User defined constructor
     public Node(ArrayList<ArrayList<Integer>> matrix, int cost, ArrayList<String> directions) {
         this.setId(++counter);
         this.matrix = matrix;
@@ -24,10 +26,7 @@ public class Node {
         this.depth = this.directions.size();
     }
 
-    public int getId() {
-        return this.id;
-    }
-
+    // Getter
     public ArrayList<ArrayList<Integer>> getMatrix() {
         return this.matrix;
     }
@@ -44,22 +43,7 @@ public class Node {
         this.id = id;
     }
 
-    public void setMatrix(ArrayList<ArrayList<Integer>> matrix) {
-        this.matrix = matrix;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    public void setDirections(ArrayList<String> directions) { this.directions = directions; }
-
-    public void setDepth(int depth) { this.depth = depth; }
-
-    public void addDirections(String direction) {
-        this.directions.add(direction);
-    }
-
+    // Function to display the matrix within a node
     public void displayMatrix() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -69,6 +53,7 @@ public class Node {
         }
     }
 
+    // Function to display in-depth information about a node
     public void displayIndividualNodes() {
         System.out.println("Id: " + this.id);
         System.out.println("Matrix: ");
@@ -77,21 +62,5 @@ public class Node {
         System.out.println("Directions taken: " + this.directions.toString());
         System.out.println("Depth: " + this.depth);
         System.out.println();
-    }
-
-    public String displayNodesMatrixInString() {
-        StringBuilder output = new StringBuilder();
-        if (this.directions.size() != 0) {
-            output.append("Direction taken: " + this.directions.get(this.directions.size() - 1) + "\n");
-        }
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                output.append(this.matrix.get(i).get(j) + " ");
-            }
-            output.append("\n");
-        }
-        output.append("\n");
-        return output.toString();
     }
 }

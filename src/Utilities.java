@@ -1,8 +1,8 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Utilities {
+    // Function to add all the elements within an array
     public static int sumArray(ArrayList<Integer> array) {
         int sum = 0;
         for (int i = 0; i < array.size(); i++) {
@@ -11,18 +11,7 @@ public class Utilities {
         return sum;
     }
 
-    public static ArrayList<ArrayList<Integer>> copyMatrix(ArrayList<ArrayList<Integer>> input) {
-        ArrayList<ArrayList<Integer>> output = new ArrayList<ArrayList<Integer>>();
-        for (int i = 0; i < 4; i++) {
-            ArrayList<Integer> outputRow = new ArrayList<Integer>();
-            for (int j = 0; j < 4; j++) {
-                outputRow.add(input.get(i).get(j));
-            }
-            output.add(outputRow);
-        }
-        return output;
-    }
-
+    // Function to find the opposite of a direction (e.g. the opposite of "UP" is "DOWN")
     public static String getReverseDirection(String direction) {
         if (direction.equals("UP")) {
             return "DOWN";
@@ -39,20 +28,25 @@ public class Utilities {
         return "None";
     }
 
-    public static void displayNodes(ArrayList<Node> listOfNodes) {
-        for (int i = 0; i < listOfNodes.size(); i++) {
-            listOfNodes.get(i).displayIndividualNodes();
+    // Function to copy a matrix to another matrix
+    public static ArrayList<ArrayList<Integer>> copyMatrix(ArrayList<ArrayList<Integer>> input) {
+        ArrayList<ArrayList<Integer>> output = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < 4; i++) {
+            ArrayList<Integer> outputRow = new ArrayList<Integer>();
+            for (int j = 0; j < 4; j++) {
+                outputRow.add(input.get(i).get(j));
+            }
+            output.add(outputRow);
         }
+        return output;
     }
 
+    // Function to copy a list to another list
     public static ArrayList<String> copyList(ArrayList<String> originalList) {
-        ArrayList<String> resultList = new ArrayList<String>();
-        for (int i = 0; i < originalList.size(); i++) {
-            resultList.add(originalList.get(i));
-        }
-        return resultList;
+        return new ArrayList<String>(originalList);
     }
 
+    // Function to convert a list to a matrix
     public static ArrayList<ArrayList<Integer>> convertListToMatrix(ArrayList<Integer> list) {
         int counter = 0;
         ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
@@ -68,6 +62,7 @@ public class Utilities {
         return matrix;
     }
 
+    // Function to convert a matrix to a list
     public static ArrayList<Integer> convertMatrixToList(ArrayList<ArrayList<Integer>> matrix) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int i = 0; i < 4; i++) {
@@ -78,20 +73,25 @@ public class Utilities {
         return list;
     }
 
-    public static boolean checkNodeRepeatance(ArrayList<Node> nodeList, Node elmt) {
-        for (int i = 0; i < nodeList.size(); i++) {
-            if (nodeList.get(i).getMatrix().equals(elmt.getMatrix())) {
-                return true;
+    // Function to find a repeating node within an arraylist
+    // If there is a repeating nodes, function will return true
+    public static boolean checkRepeatingNodes(ArrayList<Node> nodeList, Node elmt) {
+        for (Node node : nodeList) {
+            if (node.getMatrix().equals(elmt.getMatrix())) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    public static boolean checkElementRepeatance(ArrayList<ArrayList<Integer>> matrix) {
+    // Function to find a repeating element within a matrix
+    // If there is a repeating element, function will return false
+    public static boolean checkRepeatingElement(ArrayList<ArrayList<Integer>> matrix) {
         HashSet<Integer> setChecker = new HashSet<Integer>(convertMatrixToList(matrix));
         return (setChecker.size() == matrix.size());
     }
 
+    // Function to format a matrix output
     public static String formatMatrixOutput(ArrayList<ArrayList<Integer>> matrix) {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < 4; i++) {
@@ -104,6 +104,7 @@ public class Utilities {
         return output.toString();
     }
 
+    // Function to display goal states within the GUI
     public static String displayGoalStates(ArrayList<ArrayList<Integer>> root, ArrayList<Node> goalState) {
         ArrayList<ArrayList<Integer>> currentMatrix = copyMatrix(root);
         StringBuilder output = new StringBuilder();
@@ -124,6 +125,4 @@ public class Utilities {
         output.append(goalState.get(0).getDirections());
         return output.toString();
     }
-
-
 }

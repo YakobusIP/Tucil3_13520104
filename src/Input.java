@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Input {
+    // Function to create a random matrix
     public static ArrayList<ArrayList<Integer>> createRandomMatrix() {
         ArrayList<Integer> randomNumber = new ArrayList<Integer>();
         for (int i = 0; i < 16; i++) {
@@ -24,7 +25,7 @@ public class Input {
 
         return matrix;
     }
-
+    // Function to read matrix from a file
     public static ArrayList<ArrayList<Integer>> readFromFile(String path) throws FileNotFoundException {
         Scanner input = new Scanner(new File(path));
         ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();

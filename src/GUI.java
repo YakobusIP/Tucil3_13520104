@@ -1,13 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUI implements ActionListener {
+public class GUI {
     // Creating frame objects
     private JFrame frame;
 
@@ -104,11 +101,6 @@ public class GUI implements ActionListener {
         cLeftPane.insets = new Insets(20, 20, 20, 10);
         mainPanel.add(leftPanel, cLeftPane);
 
-        /*
-        // Scroll wheel
-        scrollVertical = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        mainPanel.add(scrollVertical); */
-
         // Objects on the right
         // Label Objects
         intro1 = new JLabel("Welcome to 15-Puzzle Problem Solver using Branch and Bound Algorithm");
@@ -192,6 +184,7 @@ public class GUI implements ActionListener {
         mainPanel.add(matrixInputPanel, cMatrixArea);
 
         // Buttons
+        // File input button
         button_file_input = new JButton("Input matrix from file");
         GridBagConstraints cButtonFile = new GridBagConstraints();
         cButtonFile.gridx = 1;
@@ -199,6 +192,7 @@ public class GUI implements ActionListener {
         cButtonFile.insets = new Insets(2, 10, 2, 20);
         mainPanel.add(button_file_input, cButtonFile);
 
+        // Random input button
         button_random_input = new JButton("Use random matrix");
         GridBagConstraints cButtonRandom = new GridBagConstraints();
         cButtonRandom.gridx = 1;
@@ -206,6 +200,7 @@ public class GUI implements ActionListener {
         cButtonRandom.insets = new Insets(2, 10, 2, 20);
         mainPanel.add(button_random_input, cButtonRandom);
 
+        // Start button
         button_start = new JButton("Start");
         GridBagConstraints cButtonStart = new GridBagConstraints();
         cButtonStart.gridx = 1;
@@ -213,6 +208,7 @@ public class GUI implements ActionListener {
         cButtonStart.insets = new Insets(2, 10, 2, 20);
         mainPanel.add(button_start, cButtonStart);
 
+        // Reset button
         button_reset = new JButton("Reset");
         GridBagConstraints cButtonReset = new GridBagConstraints();
         cButtonReset.gridx = 1;
@@ -234,11 +230,7 @@ public class GUI implements ActionListener {
         frame.setVisible(true);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
+    // Action when file button is pressed
     public void fileButtonPressed() {
         if (!inputExists) {
             JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
@@ -255,7 +247,7 @@ public class GUI implements ActionListener {
                 System.out.println("New Path: " + convertedFileName);
                 try {
                     matrix = Input.readFromFile(convertedFileName);
-                    if (Utilities.checkElementRepeatance(matrix)) {
+                    if (Utilities.checkRepeatingElement(matrix)) {
                         printErrorMessage("Not all matrix elements are distinct!");
                     } else {
                         inputExists = true;
@@ -264,6 +256,7 @@ public class GUI implements ActionListener {
                         for (int i = 0; i < 4; i++) {
                             for (int j = 0; j < 4; j++) {
                                 listOfTextFields.get(counter).setText(matrix.get(i).get(j).toString());
+                                listOfTextFields.get(counter).setEditable(false);
                                 counter++;
                             }
                         }
@@ -278,6 +271,7 @@ public class GUI implements ActionListener {
         }
     }
 
+    // Action when random button is pressed
     public void randomButtonPressed() {
         if (!inputExists) {
             boolean reachableMatrix = false;
@@ -296,6 +290,7 @@ public class GUI implements ActionListener {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     listOfTextFields.get(counter).setText(matrix.get(i).get(j).toString());
+                    listOfTextFields.get(counter).setEditable(false);
                     counter++;
                 }
             }
@@ -304,6 +299,7 @@ public class GUI implements ActionListener {
         }
     }
 
+    // Action when start button is pressed
     public void startButtonPressed() {
         boolean correct = true;
         // If user didn't use a file or create a random matrix, then read the entry from the text fields
@@ -317,7 +313,7 @@ public class GUI implements ActionListener {
             }
             System.out.println(listOfNumbers);
             matrix = Utilities.convertListToMatrix(listOfNumbers);
-            if (Utilities.checkElementRepeatance(matrix)) {
+            if (Utilities.checkRepeatingElement(matrix)) {
                 printErrorMessage("Not all matrix elements are distinct!");
             } else {
                 correct = true;
@@ -352,21 +348,25 @@ public class GUI implements ActionListener {
         }
     }
 
+    // Action when reset button is pressed
     public void resetButtonPressed() {
         usingFile = false;
         usingRandom = false;
         inputExists = false;
         for (int i = 0; i < 16; i++) {
             listOfTextFields.get(i).setText(null);
+            listOfTextFields.get(i).setEditable(true);
         }
         outputArea.setText(null);
         printErrorMessage("No Error Found!");
     }
 
+    // Function to display text in the text area
     public void printTextOutput(String text) {
         outputArea.setText(text);
     }
 
+    // Function to display error messages
     public void printErrorMessage(String text){
         errorLabel.setText("Error: " + text);
     }

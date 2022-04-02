@@ -22,7 +22,7 @@ public class Algorithm {
         return x;
     }
 
-    // Get the goal matrix
+    // Function to get the goal matrix
     public static ArrayList<ArrayList<Integer>> getGoalMatrix() {
         ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
         int element = 1;
@@ -60,7 +60,7 @@ public class Algorithm {
         }
     }
 
-    // Check if goal is reachable
+    // Check if goal is reachable using KURANG(i) + X
     public static List<Object> isGoalReachable(ArrayList<ArrayList<Integer>> matrix) {
         int addition, counter, result;
         boolean goal;
@@ -73,8 +73,8 @@ public class Algorithm {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int testElmt = matrix.get(i).get(j);
+                counter = 0;
                 if (testElmt != 0) {
-                    counter = 0;
                     for (int x = 0; x < 4; x++) {
                         for (int y = 0; y < 4; y++) {
                             if (matrix.get(x).get(y) < testElmt && matrix.get(x).get(y) != 0) {
@@ -88,7 +88,6 @@ public class Algorithm {
                     }
                     incorrectPos.add(testElmt - 1, counter);
                 } else {
-                    counter = 0;
                     addition = findX(i, j);
                     for (int x = 0; x < 4; x++) {
                         for (int y = 0; y < 4; y++) {
@@ -113,6 +112,7 @@ public class Algorithm {
         return Arrays.asList(goal, result);
     }
 
+    // Function to check which directions are possible to move the empty slot
     public static ArrayList<String> checkDirectionPossibilities(ArrayList<ArrayList<Integer>> matrix) {
         ArrayList<String> possibilities = new ArrayList<String>();
         for (int i = 0; i < 4; i++) {
@@ -136,28 +136,34 @@ public class Algorithm {
         return possibilities;
     }
 
+    // Function to create new child matrix based on its direction
     public static ArrayList<ArrayList<Integer>> createNewChild(ArrayList<ArrayList<Integer>> root, String direction) {
         ArrayList<ArrayList<Integer>> newChild = Utilities.copyMatrix(root);
         boolean newMatrixCreated = false;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (root.get(i).get(j).equals(0) && !newMatrixCreated) {
-                    if (direction.equals("UP")) {
-                        newChild.get(i).set(j, root.get(i - 1).get(j));
-                        newChild.get(i - 1).set(j, 0);
-                        newMatrixCreated = true;
-                    } else if (direction.equals("DOWN")) {
-                        newChild.get(i).set(j, root.get(i + 1).get(j));
-                        newChild.get(i + 1).set(j, 0);
-                        newMatrixCreated = true;
-                    } else if (direction.equals("LEFT")) {
-                        newChild.get(i).set(j, root.get(i).get(j - 1));
-                        newChild.get(i).set(j - 1, 0);
-                        newMatrixCreated = true;
-                    } else if (direction.equals("RIGHT")) {
-                        newChild.get(i).set(j, root.get(i).get(j + 1));
-                        newChild.get(i).set(j + 1, 0);
-                        newMatrixCreated = true;
+                    switch (direction) {
+                        case "UP" -> {
+                            newChild.get(i).set(j, root.get(i - 1).get(j));
+                            newChild.get(i - 1).set(j, 0);
+                            newMatrixCreated = true;
+                        }
+                        case "DOWN" -> {
+                            newChild.get(i).set(j, root.get(i + 1).get(j));
+                            newChild.get(i + 1).set(j, 0);
+                            newMatrixCreated = true;
+                        }
+                        case "LEFT" -> {
+                            newChild.get(i).set(j, root.get(i).get(j - 1));
+                            newChild.get(i).set(j - 1, 0);
+                            newMatrixCreated = true;
+                        }
+                        case "RIGHT" -> {
+                            newChild.get(i).set(j, root.get(i).get(j + 1));
+                            newChild.get(i).set(j + 1, 0);
+                            newMatrixCreated = true;
+                        }
                     }
                 }
             }
@@ -165,34 +171,38 @@ public class Algorithm {
         return newChild;
     }
 
+    // Branch And Bound Algorithm will return the goalStates and the amount of nodes created
     public static List<Object> branchAndBoundAlgorithm(Node root) {
+        // Retrieving result from reachableResult function
         List<Object> reachableResult = isGoalReachable(root.getMatrix());
         boolean goal = (boolean)reachableResult.get(0);
         int result = (int)reachableResult.get(1);
+
+        // Declaring list of nodes
         ArrayList<Node> goalStates = new ArrayList<Node>();
         ArrayList<Node> allStates = new ArrayList<Node>();
         int nodeCount = 0;
+        // If goal is reachable, start branch and bound algorithm
         if (goal) {
             System.out.println("Function KURANG(i) + X result is " + result + " which is even");
+
+            // Declaring priority queue and E-node
             PrioQueue liveNodes = new PrioQueue();
             Node e_node;
             boolean finish = false;
-            int counter = 0;
             while (!finish) {
                 if (liveNodes.getPrioQueue().isEmpty()) {
                     e_node = root;
-                    //goalStates.add(e_node);
-                    if (!Utilities.checkNodeRepeatance(allStates, e_node)) {
-                        allStates.add(e_node);
-                    }
                 } else {
                     e_node = liveNodes.peek();
-                    //goalStates.add(e_node);
                     liveNodes.pop();
-                    if (!Utilities.checkNodeRepeatance(allStates, e_node)) {
-                        allStates.add(e_node);
-                    }
                 }
+
+                if (Utilities.checkRepeatingNodes(allStates, e_node)) {
+                    allStates.add(e_node);
+                }
+
+                // Debugging purposes
                 System.out.println("Current e-node: ");
                 e_node.displayIndividualNodes();
 
@@ -202,8 +212,6 @@ public class Algorithm {
                     // Add the node to the goal state list
                     goalStates.add(e_node);
                     // Remove nodes with higher cost (lower priority) than the e_node
-                    //liveNodes.removeLowerPriority(e_node);
-
                     liveNodes.removeLowerPriority(e_node);
 
                     // If no more live nodes exists, break the loop
@@ -231,7 +239,7 @@ public class Algorithm {
                             childDirectionList.add(direction);
                             Node newChild = new Node(newChildMatrix, cost, childDirectionList);
 
-                            // Add newChild to liveNodes
+                            // Add newChild to liveNodes and allStates list
                             liveNodes.push(allStates, newChild);
                             allStates.add(newChild);
                         } else {
@@ -251,15 +259,15 @@ public class Algorithm {
                                 childDirectionList.add(direction);
                                 Node newChild = new Node(newChildMatrix, cost, childDirectionList);
 
-                                // Add newChild to liveNodes
+                                // Add newChild to liveNodes and allStates list
                                 liveNodes.push(allStates, newChild);
                                 allStates.add(newChild);
                             }
                         }
                     }
                 }
-                //liveNodes.displayQueue();
             }
+        // If goal is not reachable, output information to the terminal
         } else {
             System.out.println("Goal is not reachable!");
             System.out.println("Function KURANG(i) + X result is " + result + " which is odd");
