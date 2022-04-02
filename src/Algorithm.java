@@ -165,12 +165,13 @@ public class Algorithm {
         return newChild;
     }
 
-    public static ArrayList<Node> branchAndBoundAlgorithm(Node root) {
+    public static List<Object> branchAndBoundAlgorithm(Node root) {
         List<Object> reachableResult = isGoalReachable(root.getMatrix());
         boolean goal = (boolean)reachableResult.get(0);
         int result = (int)reachableResult.get(1);
         ArrayList<Node> goalStates = new ArrayList<Node>();
         ArrayList<Node> allStates = new ArrayList<Node>();
+        int nodeCount = 0;
         if (goal) {
             System.out.println("Function KURANG(i) + X result is " + result + " which is even");
             PrioQueue liveNodes = new PrioQueue();
@@ -180,15 +181,15 @@ public class Algorithm {
             while (!finish) {
                 if (liveNodes.getPrioQueue().isEmpty()) {
                     e_node = root;
-                    goalStates.add(e_node);
-                    if (!Utilities.checkRepeatance(allStates, e_node)) {
+                    //goalStates.add(e_node);
+                    if (!Utilities.checkNodeRepeatance(allStates, e_node)) {
                         allStates.add(e_node);
                     }
                 } else {
                     e_node = liveNodes.peek();
-                    goalStates.add(e_node);
+                    //goalStates.add(e_node);
                     liveNodes.pop();
-                    if (!Utilities.checkRepeatance(allStates, e_node)) {
+                    if (!Utilities.checkNodeRepeatance(allStates, e_node)) {
                         allStates.add(e_node);
                     }
                 }
@@ -207,6 +208,7 @@ public class Algorithm {
 
                     // If no more live nodes exists, break the loop
                     if (liveNodes.getPrioQueue().isEmpty()) {
+                        nodeCount = allStates.size();
                         finish = true;
                     }
                 } else {
@@ -256,11 +258,12 @@ public class Algorithm {
                         }
                     }
                 }
+                //liveNodes.displayQueue();
             }
         } else {
             System.out.println("Goal is not reachable!");
             System.out.println("Function KURANG(i) + X result is " + result + " which is odd");
         }
-        return goalStates;
+        return Arrays.asList(goalStates, nodeCount);
     }
 }

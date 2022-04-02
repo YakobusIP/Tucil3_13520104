@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Utilities {
     public static int sumArray(ArrayList<Integer> array) {
@@ -66,7 +68,17 @@ public class Utilities {
         return matrix;
     }
 
-    public static boolean checkRepeatance(ArrayList<Node> nodeList, Node elmt) {
+    public static ArrayList<Integer> convertMatrixToList(ArrayList<ArrayList<Integer>> matrix) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                list.add(matrix.get(i).get(j));
+            }
+        }
+        return list;
+    }
+
+    public static boolean checkNodeRepeatance(ArrayList<Node> nodeList, Node elmt) {
         for (int i = 0; i < nodeList.size(); i++) {
             if (nodeList.get(i).getMatrix().equals(elmt.getMatrix())) {
                 return true;
@@ -75,18 +87,43 @@ public class Utilities {
         return false;
     }
 
-    public static String displayGoalStates(ArrayList<Node> goalState) {
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < goalState.size() - 1; i++) {
-            if (i == goalState.size() - 2) {
-                output.append("Final State: \n");
-                output.append(goalState.get(i).displayNodesMatrixInString());
-            } else {
-                output.append("Matrix: \n");
-                output.append(goalState.get(i).displayNodesMatrixInString());
-            }
+    public static boolean checkElementRepeatance(ArrayList<ArrayList<Integer>> matrix) {
+        HashSet<Integer> setChecker = new HashSet<Integer>(convertMatrixToList(matrix));
+        return (setChecker.size() == matrix.size());
+    }
 
+    public static String formatMatrixOutput(ArrayList<ArrayList<Integer>> matrix) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                output.append(matrix.get(i).get(j) + " ");
+            }
+            output.append("\n");
         }
+        output.append("\n");
         return output.toString();
     }
+
+    public static String displayGoalStates(ArrayList<ArrayList<Integer>> root, ArrayList<Node> goalState) {
+        ArrayList<ArrayList<Integer>> currentMatrix = copyMatrix(root);
+        StringBuilder output = new StringBuilder();
+        ArrayList<String> direction = goalState.get(0).getDirections();
+        for (int i = 0; i < direction.size(); i++) {
+            ArrayList<ArrayList<Integer>> printChild = Algorithm.createNewChild(currentMatrix, direction.get(i));
+            if (i == direction.size() - 1) {
+                output.append("Goal State: \n");
+                output.append("Direction taken: " + direction.get(i) + "\n");
+                output.append(formatMatrixOutput(printChild));
+            } else {
+                output.append("Direction taken: " + direction.get(i) + "\n");
+                output.append(formatMatrixOutput(printChild));
+            }
+            currentMatrix = copyMatrix(printChild);
+        }
+        output.append("Directions Taken: \n");
+        output.append(goalState.get(0).getDirections());
+        return output.toString();
+    }
+
+
 }

@@ -17,6 +17,7 @@ public class GUI implements ActionListener {
     private JLabel intro3;
     private JLabel intro4;
     private JLabel errorLabel;
+    private JLabel resetLabel;
     private JLabel timeTaken;
 
     // Creating button objects
@@ -81,17 +82,16 @@ public class GUI implements ActionListener {
         cTextArea.fill = GridBagConstraints.BOTH;
         cTextArea.gridx = 0;
         cTextArea.gridy = 0;
-        cTextArea.gridheight = 11;
+        cTextArea.gridheight = 12;
         cTextArea.ipadx = 400;
-        outputArea.setText("This is the left panel");
         leftPanel.add(outputArea, cTextArea);
 
-        scrollVertical = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollVertical = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         GridBagConstraints cScrollPanel = new GridBagConstraints();
         cScrollPanel.fill = GridBagConstraints.BOTH;
         cScrollPanel.gridx = 0;
         cScrollPanel.gridy = 1;
-        cScrollPanel.gridheight = 11;
+        cScrollPanel.gridheight = 12;
         cScrollPanel.ipadx = 400;
         cScrollPanel.ipady = 400;
         leftPanel.add(scrollVertical, cScrollPanel);
@@ -100,7 +100,7 @@ public class GUI implements ActionListener {
         cLeftPane.fill = GridBagConstraints.BOTH;
         cLeftPane.gridx = 0;
         cLeftPane.gridy = 0;
-        cLeftPane.gridheight = 11;
+        cLeftPane.gridheight = 12;
         cLeftPane.insets = new Insets(20, 20, 20, 10);
         mainPanel.add(leftPanel, cLeftPane);
 
@@ -146,10 +146,17 @@ public class GUI implements ActionListener {
         cErrorLabel.insets = new Insets(5, 10, 5, 20);
         mainPanel.add(errorLabel, cErrorLabel);
 
-        timeTaken = new JLabel("Time taken: ");
+        resetLabel = new JLabel("Click the reset button to use another method");
+        GridBagConstraints cResetLabel = new GridBagConstraints();
+        cResetLabel.gridx = 1;
+        cResetLabel.gridy = 10;
+        cResetLabel.insets = new Insets(5, 10, 5, 20);
+        mainPanel.add(resetLabel, cResetLabel);
+
+        timeTaken = new JLabel("Time elapsed: 0 ms");
         GridBagConstraints cTimeTaken = new GridBagConstraints();
         cTimeTaken.gridx = 0;
-        cTimeTaken.gridy = 11;
+        cTimeTaken.gridy = 12;
         cTimeTaken.gridwidth = 2;
         cTimeTaken.insets = new Insets(5, 20,20, 20);
         mainPanel.add(timeTaken, cTimeTaken);
@@ -209,7 +216,7 @@ public class GUI implements ActionListener {
         button_reset = new JButton("Reset");
         GridBagConstraints cButtonReset = new GridBagConstraints();
         cButtonReset.gridx = 1;
-        cButtonReset.gridy = 10;
+        cButtonReset.gridy = 11;
         cButtonReset.insets = new Insets(2, 10, 20, 20);
         mainPanel.add(button_reset, cButtonReset);
 
@@ -248,15 +255,20 @@ public class GUI implements ActionListener {
                 System.out.println("New Path: " + convertedFileName);
                 try {
                     matrix = Input.readFromFile(convertedFileName);
-                    inputExists = true;
-                    usingFile = true;
-                    int counter = 0;
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-                            listOfTextFields.get(counter).setText(matrix.get(i).get(j).toString());
-                            counter++;
+                    if (Utilities.checkElementRepeatance(matrix)) {
+                        printErrorMessage("Not all matrix elements are distinct!");
+                    } else {
+                        inputExists = true;
+                        usingFile = true;
+                        int counter = 0;
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 4; j++) {
+                                listOfTextFields.get(counter).setText(matrix.get(i).get(j).toString());
+                                counter++;
+                            }
                         }
                     }
+
                 } catch (Exception e) {
                     printErrorMessage("File not found!");
                 }
@@ -288,13 +300,15 @@ public class GUI implements ActionListener {
                 }
             }
         } else {
-            printErrorMessage("Choose only one method to get the matrix!");
+            printErrorMessage("Choose only one method to get the matrix! Click the reset button to use another method");
         }
     }
 
     public void startButtonPressed() {
+        boolean correct = true;
         // If user didn't use a file or create a random matrix, then read the entry from the text fields
         if (!usingFile && !usingRandom) {
+            correct = false;
             ArrayList<Integer> listOfNumbers = new ArrayList<Integer>();
             for (JTextField textFields : listOfTextFields) {
                 String strNumber = textFields.getText();
@@ -303,19 +317,39 @@ public class GUI implements ActionListener {
             }
             System.out.println(listOfNumbers);
             matrix = Utilities.convertListToMatrix(listOfNumbers);
+            if (Utilities.checkElementRepeatance(matrix)) {
+                printErrorMessage("Not all matrix elements are distinct!");
+            } else {
+                correct = true;
+            }
         }
 
-        // Create a root node to start the algorithm
-        startTime = System.nanoTime();
-        ArrayList<String> direction = new ArrayList<String>();
-        Node root = new Node(matrix, 0, direction);
-        goalStates = Algorithm.branchAndBoundAlgorithm(root);
-        endTime = System.nanoTime();
-        String text = Utilities.displayGoalStates(goalStates);
-        printTextOutput(text);
-        long difference = (endTime - startTime);
-        float timeElapsed = (float)difference / 1000000;
-        timeTaken.setText("Time taken: " + timeElapsed + " ms");
+        if (correct) {
+            // Create a root node to start the algorithm
+            startTime = System.nanoTime();
+            ArrayList<String> direction = new ArrayList<String>();
+            Node root = new Node(matrix, 0, direction);
+            int result = (int)Algorithm.isGoalReachable(matrix).get(1);
+            List<Object> algorithmResult = Algorithm.branchAndBoundAlgorithm(root);
+            goalStates = (ArrayList<Node>) algorithmResult.get(0);
+            int nodeCount = (int)algorithmResult.get(1);
+            endTime = System.nanoTime();
+            // If goalStates is empty, then function KURANG(X) + i result is odd
+            if (goalStates.isEmpty()) {
+                StringBuilder output = new StringBuilder();
+                output.append("Goal state is not reachable!\n");
+                output.append("Function KURANG(i) + X result is ").append(result).append(" which is odd");
+                printTextOutput(output.toString());
+            } else {
+                String text = "KURANG(i) + X = " + result + '\n';
+                text += Utilities.displayGoalStates(matrix, goalStates);
+                text += "\nGenerated " + nodeCount + " node(s)";
+                printTextOutput(text);
+                long difference = (endTime - startTime);
+                float timeElapsed = (float)difference / 1000000;
+                timeTaken.setText("Time elapsed: " + timeElapsed + " ms");
+            }
+        }
     }
 
     public void resetButtonPressed() {

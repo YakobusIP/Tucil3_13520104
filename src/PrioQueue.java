@@ -35,7 +35,7 @@ public class PrioQueue {
     // The lower the cost, the earlier its placement
     public void push(ArrayList<Node> nodeList, Node elmt) {
         // If the element already exists in the node list, don't add it
-        if (!Utilities.checkRepeatance(nodeList, elmt)) {
+        if (!Utilities.checkNodeRepeatance(nodeList, elmt)) {
             // If priority queue is still empty, just add the element
             if (this.prioQueue.isEmpty()) {
                 this.prioQueue.add(elmt);
