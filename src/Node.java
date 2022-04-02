@@ -26,7 +26,7 @@ public class Node {
         this.depth = this.directions.size();
     }
 
-    // Getter
+    // Getter and setter
     public ArrayList<ArrayList<Integer>> getMatrix() {
         return this.matrix;
     }

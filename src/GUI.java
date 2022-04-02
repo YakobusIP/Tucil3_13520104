@@ -83,7 +83,7 @@ public class GUI {
         cTextArea.ipadx = 400;
         leftPanel.add(outputArea, cTextArea);
 
-        scrollVertical = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollVertical = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         GridBagConstraints cScrollPanel = new GridBagConstraints();
         cScrollPanel.fill = GridBagConstraints.BOTH;
         cScrollPanel.gridx = 0;
@@ -307,6 +307,7 @@ public class GUI {
             correct = false;
             ArrayList<Integer> listOfNumbers = new ArrayList<Integer>();
             for (JTextField textFields : listOfTextFields) {
+                textFields.setEditable(false);
                 String strNumber = textFields.getText();
                 Integer number = Integer.valueOf(strNumber);
                 listOfNumbers.add(number);
@@ -337,7 +338,7 @@ public class GUI {
                 output.append("Function KURANG(i) + X result is ").append(result).append(" which is odd");
                 printTextOutput(output.toString());
             } else {
-                String text = "KURANG(i) + X = " + result + '\n';
+                String text = "KURANG(i) + X = " + result + "\n" + "\n";
                 text += Utilities.displayGoalStates(matrix, goalStates);
                 text += "\nGenerated " + nodeCount + " node(s)";
                 printTextOutput(text);
@@ -358,6 +359,7 @@ public class GUI {
             listOfTextFields.get(i).setEditable(true);
         }
         outputArea.setText(null);
+        timeTaken.setText("Time elapsed: 0 ms");
         printErrorMessage("No Error Found!");
     }
 
