@@ -10,12 +10,15 @@ Untuk Windows Operating System
 4. Tekan tombol start ketika input sudah dimasukkan.
 5. Tekan tombol reset apabila ingin mengganti metode input matriks.
 6. Apabila ingin menggunakan input matriks dari sebuah file, maka file tersebut harus berisi matriks saja.
+Contoh isi file input matriks:
 ```
 1 2 3 4
 5 6 0 8
 9 10 7 11
 13 14 15 12
 ```
+
+Catatan: Apabila program terlihat stuck atau not responding, maka program sedang melakukan looping algoritma branch and bound. Untuk menghentikan looping, silahkan *end task* di task manager atau tekan CTRL + C di command prompt yang terbuka.
 
 ## Created by:
 Yakobus Iryanto Prasethio (13520104)
