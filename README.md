@@ -4,12 +4,13 @@ Program untuk menemukan solusi dari sebuah matriks permainan 15-Puzzle-Problem m
 
 ## Setup
 Untuk Windows Operating System
-1. Jalan file **15-Puzzle-Problem** yang terdapat di folder bin
-2. Apabila file tersebut tidak terbuka, jalankan file **run.bat** yang terdapat di folder bin.
-3. Ketika GUI sudah terbuka, masukkan matriks awal sesuai keinginan pengguna, bisa menggunakan input secara langsung, menggunakan input dari file, atau membuat matriks random dari program.
-4. Tekan tombol start ketika input sudah dimasukkan.
-5. Tekan tombol reset apabila ingin mengganti metode input matriks.
-6. Apabila ingin menggunakan input matriks dari sebuah file, maka file tersebut harus berisi matriks saja.
+1. Pastikan Java dan JDK terbaru sudah ter-install di sistem operasi
+2. Jalan file **15-Puzzle-Problem** yang terdapat di folder bin
+3. Apabila file tersebut tidak terbuka, jalankan file **run.bat** yang terdapat di folder bin.
+4. Ketika GUI sudah terbuka, masukkan matriks awal sesuai keinginan pengguna, bisa menggunakan input secara langsung, menggunakan input dari file, atau membuat matriks random dari program.
+5. Tekan tombol start ketika input sudah dimasukkan.
+6. Tekan tombol reset apabila ingin mengganti metode input matriks.
+7. Apabila ingin menggunakan input matriks dari sebuah file, maka file tersebut harus berisi matriks saja.
 Contoh isi file input matriks:
 ```
 1 2 3 4
